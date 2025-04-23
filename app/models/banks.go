@@ -2,7 +2,7 @@ package models
 
 import "gorm.io/gorm"
 
-type Banks struct {
+type Bank struct {
 	Adress        string `json:"adress"`
 	BankName      string `json:"bankName"`
 	CountryISO2   string `json:"countryISO2"`
@@ -12,6 +12,6 @@ type Banks struct {
 }
 
 func MigrateBanks(db *gorm.DB) error {
-	err := db.AutoMigrate(&Banks{})
+	err := db.AutoMigrate(&Bank{})
 	return err
 }
