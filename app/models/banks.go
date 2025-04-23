@@ -8,7 +8,7 @@ type Banks struct {
 	CountryISO2   string `json:"countryISO2"`
 	CountryName   string `json:"countryName"`
 	IsHeadquarter bool   `json:"isHeadquarter"`
-	SwiftCode     string `gorm:"primary key" json:"swiftCode"`
+	SwiftCode     string `gorm:"primaryKey" json:"swiftCode"`
 }
 
 func MigrateBanks(db *gorm.DB) error {
