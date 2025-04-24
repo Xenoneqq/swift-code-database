@@ -61,7 +61,7 @@ func (r *Repository) GetAllBanks(context *fiber.Ctx) error {
 }
 
 func (r *Repository) GetBankByID(context *fiber.Ctx) error {
-	banks := &[]models.Bank{}
+	bank := &models.Bank{}
 	id := context.Params("id")
 
 	if id == "" {
@@ -71,7 +71,7 @@ func (r *Repository) GetBankByID(context *fiber.Ctx) error {
 		return nil
 	}
 
-	res := r.DB.Where("swift_code = ?", id).Find(banks)
+	res := r.DB.Where("swift_code = ?", id).First(bank)
 	if res.Error != nil {
 		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
 			"message": "failed to fetch for bank with SWIFT code",
@@ -87,10 +87,47 @@ func (r *Repository) GetBankByID(context *fiber.Ctx) error {
 		return nil
 	}
 
-	context.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "found bank with SWIFT code",
-		"data":    banks,
-	})
+	if bank.IsHeadquarter {
+
+		branchesFull := &[]models.Bank{}
+		first8 := id[:8]
+		res = r.DB.Where("LEFT(swift_code, 8) = ?", first8).Where("is_headquarter != ?", bank.IsHeadquarter).Find(branchesFull)
+		if res.Error != nil {
+			context.Status(http.StatusBadRequest).JSON(&fiber.Map{
+				"message": "failed to fetch for branches of bank with SWIFT code",
+			})
+			return res.Error
+		}
+
+		branches := models.ConvertBanksToBranches(*branchesFull)
+		headquarter := models.Headquarter{}
+
+		headquarter.Address = bank.Address
+		headquarter.BankName = bank.BankName
+		headquarter.CountryISO2 = bank.CountryISO2
+		headquarter.CountryName = bank.CountryName
+		headquarter.IsHeadquarter = bank.IsHeadquarter
+		headquarter.SwiftCode = bank.SwiftCode
+		headquarter.Branches = branches
+
+		context.Status(http.StatusOK).JSON(&fiber.Map{
+			"message": "found bank with SWIFT code",
+			"data":    headquarter,
+		})
+	} else {
+
+		context.Status(http.StatusOK).JSON(&fiber.Map{
+			"message": "found bank with SWIFT code",
+			"data": fiber.Map{
+				"address":       bank.Address,
+				"bankName":      bank.BankName,
+				"countryISO2":   bank.CountryISO2,
+				"countryName":   bank.CountryName,
+				"isHeadquarter": bank.IsHeadquarter,
+				"swiftCode":     bank.SwiftCode,
+			},
+		})
+	}
 	return nil
 }
 
@@ -128,7 +165,7 @@ func (r *Repository) DeleteBank(context *fiber.Ctx) error {
 
 func (r *Repository) GetBankByCountry(context *fiber.Ctx) error {
 	country := context.Params("country")
-	banks := &models.Bank{}
+	banks := &[]models.Bank{}
 	if country == "" {
 		context.Status(http.StatusInternalServerError).JSON(&fiber.Map{
 			"message": "country cannot be empty",
@@ -151,9 +188,16 @@ func (r *Repository) GetBankByCountry(context *fiber.Ctx) error {
 		return nil
 	}
 
+	countryCode := (*banks)[0].CountryISO2
+	countryName := (*banks)[0].CountryName
+
 	context.Status(http.StatusOK).JSON(&fiber.Map{
 		"message": "banks fetched successfully",
-		"data":    banks,
+		"data": fiber.Map{
+			"countryISO2": countryCode,
+			"countryName": countryName,
+			"swiftCodes":  banks,
+		},
 	})
 	return nil
 }

@@ -31,6 +31,11 @@ func main() {
 		log.Fatal("failed to migrate the database")
 	}
 
+	res := db.Exec(`CREATE INDEX IF NOT EXISTS idx_swiftcode_8 ON banks ((LEFT("swift_code", 8)));`)
+	if res.Error != nil {
+		log.Fatal("failed to create index for fast searches")
+	}
+
 	r := endpoints.Repository{
 		DB: db,
 	}
