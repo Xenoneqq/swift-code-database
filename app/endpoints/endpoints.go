@@ -3,6 +3,7 @@ package endpoints
 import (
 	"net/http"
 
+	"github.com/Xenoneqq/swift-code-database/handler"
 	"github.com/Xenoneqq/swift-code-database/models"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -14,11 +15,18 @@ type Repository struct {
 
 func (r *Repository) CreateBank(context *fiber.Ctx) error {
 	bank := models.Bank{}
-	err := context.BodyParser(&bank)
 
+	err := context.BodyParser(&bank)
 	if err != nil {
 		context.Status(http.StatusUnprocessableEntity).JSON(&fiber.Map{
-			"message": "request failed"})
+			"message": "failed to parse bank data to database entry (incorrect bank details)"})
+		return err
+	}
+
+	err = handler.CheckBankData(bank)
+	if err != nil {
+		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
+			"message": "failed to create bank entry"})
 		return err
 	}
 
