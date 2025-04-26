@@ -10,15 +10,15 @@ import (
 func CheckBankData(bank models.Bank) error {
 
 	if len(bank.SwiftCode) != 11 {
-		return errors.New("swift code must be 11 characters long")
+		return errors.New("SWIFT code must be 11 characters long")
 	}
 
 	if bank.SwiftCode != strings.ToUpper(bank.SwiftCode) {
-		return errors.New("swift code must consist only of UPPER LETTERS")
+		return errors.New("SWIFT code must consist only of UPPER LETTERS")
 	}
 
 	if strings.ContainsAny(bank.SwiftCode[:6], "0123456789") {
-		return errors.New("first 6 characters of the swift code cannot contain numbers")
+		return errors.New("first 6 characters of the SWIFT code cannot contain numbers")
 	}
 
 	if bank.CountryName != strings.ToUpper(bank.CountryName) {
@@ -26,15 +26,15 @@ func CheckBankData(bank models.Bank) error {
 	}
 
 	if bank.CountryISO2 != bank.SwiftCode[4:6] {
-		return errors.New("country ISO2 does not match the one inside the swiftcode : " + bank.CountryISO2 + " != " + bank.SwiftCode[4:6])
+		return errors.New("country ISO2 does not match the one inside the SWIFT code : " + bank.CountryISO2 + " != " + bank.SwiftCode[4:6])
 	}
 
 	if bank.SwiftCode[8:] == "XXX" && !bank.IsHeadquarter {
-		return errors.New("bank with XXX as the last 3 letters of the swiftcode has to be a headquarter")
+		return errors.New("bank with XXX as the last 3 letters of the SWIFT code has to be a headquarter")
 	}
 
 	if bank.SwiftCode[8:] != "XXX" && bank.IsHeadquarter {
-		return errors.New("bank without XXX as the last 3 letters of the swiftcode cannot to be a headquarter")
+		return errors.New("bank without XXX as the last 3 letters of the SWIFT code cannot to be a headquarter")
 	}
 
 	err := CheckCountry(bank.SwiftCode[4:6], bank.CountryName)

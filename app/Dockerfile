@@ -13,6 +13,7 @@ RUN go build -o main .
 
 EXPOSE 8080
 
-CMD ["sh" ,"./database_check.sh", "-t", "120", "db:5432", "--", "./main"]
+CMD ["sh", "./database_check.sh", "-t", "60", "${DB_HOST}:${DB_PORT}"]
+
 
 
