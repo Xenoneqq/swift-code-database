@@ -14,8 +14,9 @@ import (
 
 func main() {
 
-	if os.Getenv("MODE") != "" {
-		fmt.Printf("Launching application in mode : %s", os.Getenv("MODE"))
+	testMode := os.Getenv("MODE")
+	if testMode != "" {
+		fmt.Printf("Launching application in mode : %s\n", testMode)
 	}
 
 	config := &storage.Config{
@@ -48,7 +49,7 @@ func main() {
 
 	// Importing Data from csv (DEFAULT BUILD) (STARTUP ONLY)
 	flagPath := "/app/data/import_done.flag"
-	if os.Getenv("MODE") == "" {
+	if testMode == "" {
 		if _, err := os.Stat(flagPath); os.IsNotExist(err) {
 			fmt.Println("importing data from csv...")
 			err := importer.LoadCSV("./data/bank_data.csv", db)
@@ -67,11 +68,11 @@ func main() {
 		} else {
 			fmt.Println("the data has already been imported before")
 		}
-	} else if os.Getenv("MODE") == "TEST" {
+	} else if testMode == "TEST" {
 		fmt.Println("launching app in test mode...")
 		fmt.Println("preparing application for testing...")
 		// test code will be called here once reade :D
-	} else if os.Getenv("MODE") == "DEBUG" {
+	} else if testMode == "DEBUG" {
 		fmt.Println("launching app in debug mode...")
 	}
 

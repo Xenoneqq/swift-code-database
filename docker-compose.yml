@@ -13,6 +13,18 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  db_test:
+    image: postgres:15
+    container_name: swift_db_test_server
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: swift_bank_test_db
+    ports:
+      - "55432:55432"
+    volumes:
+      - pgdata_test:/var/lib/postgresql/data
+
   app:
     build: ./app
     container_name: swift_app
@@ -20,17 +32,19 @@ services:
       - "8080:8080"
     depends_on:
       - db
+      - db_test
     environment:
-      DB_HOST: db
-      DB_PORT: 5432
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
       DB_USER: root
       DB_PASSWORD: admin
-      DB_NAME: swift_bank_db
+      DB_NAME: ${DB_NAME}
       DB_SSLMODE: disable
-      TEST_MODE: ${TEST_MODE}
+      MODE: ${MODE}
     volumes:
       - app_data:/app/data
 
 volumes:
   pgdata:
+  pgdata_test:
   app_data:

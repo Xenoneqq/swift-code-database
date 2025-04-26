@@ -1,6 +1,7 @@
 package endpoints
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/Xenoneqq/swift-code-database/handler"
@@ -30,7 +31,21 @@ func (r *Repository) CreateBank(context *fiber.Ctx) error {
 		return err
 	}
 
-	res := r.DB.Create(&bank)
+	existingBank := models.Bank{}
+	res := r.DB.Where("swift_code = ?", bank.SwiftCode).Find(&existingBank)
+	if res.Error != nil {
+		context.Status(http.StatusInternalServerError).JSON(&fiber.Map{
+			"message": "failed to check for existing bank in database (connection error)"})
+		return res.Error
+	}
+
+	if res.RowsAffected != 0 {
+		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
+			"message": "bank with this swiftcode already exists"})
+		return errors.New("bank with this SWIFT code already exists")
+	}
+
+	res = r.DB.Create(&bank)
 	if res.Error != nil {
 		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
 			"message": "failed to create bank entry"})
@@ -69,7 +84,7 @@ func (r *Repository) GetAllBanks(context *fiber.Ctx) error {
 }
 
 func (r *Repository) GetBankByID(context *fiber.Ctx) error {
-	bank := &models.Bank{}
+	banks := &[]models.Bank{}
 	id := context.Params("id")
 
 	if id == "" {
@@ -79,7 +94,7 @@ func (r *Repository) GetBankByID(context *fiber.Ctx) error {
 		return nil
 	}
 
-	res := r.DB.Where("swift_code = ?", id).First(bank)
+	res := r.DB.Where("swift_code = ?", id).Find(banks)
 	if res.Error != nil {
 		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
 			"message": "failed to fetch for bank with SWIFT code",
@@ -95,6 +110,15 @@ func (r *Repository) GetBankByID(context *fiber.Ctx) error {
 		return nil
 	}
 
+	if res.RowsAffected > 1 {
+		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
+			"message": "found several banks with this SWIFT code!!!",
+			"data":    banks,
+		})
+		return nil
+	}
+
+	bank := (*banks)[0]
 	if bank.IsHeadquarter {
 
 		branchesFull := &[]models.Bank{}
