@@ -9,4 +9,5 @@ do
 done
 
 echo "Database detected. Starting up application..."
-./main
+
+sh ./run_tests.sh

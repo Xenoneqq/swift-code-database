@@ -1,0 +1,32 @@
+package main_test
+
+import (
+	"testing"
+
+	"github.com/Xenoneqq/swift-code-database/handler"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestCountryCheck_Positive(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal(0, handler.CheckCountry("PL", "POLAND"), "Correct ISO2 and country name for Poland should pass")
+	assert.Equal(0, handler.CheckCountry("BE", "BELGIUM"), "Correct ISO2 and country name for Belgium should pass")
+	assert.Equal(0, handler.CheckCountry("DE", "GERMANY"), "Correct ISO2 and country name for Germany should pass")
+	assert.Equal(0, handler.CheckCountry("FR", "FRANCE"), "Correct ISO2 and country name for France should pass")
+}
+
+func TestCountryCheck_Negative(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.NotEqual(0, handler.CheckCountry("PL", "GERMANY"), "Incorrect country name for PL should fail")
+	assert.NotEqual(0, handler.CheckCountry("BE", "POLAND"), "Incorrect country name for BE should fail")
+	assert.NotEqual(0, handler.CheckCountry("DE", "FRANCE"), "Incorrect country name for DE should fail")
+	assert.NotEqual(0, handler.CheckCountry("FR", "GERMANY"), "Incorrect country name for FR should fail")
+
+	assert.NotEqual(0, handler.CheckCountry("GB", "UNITED KINGDOM"), "Correct name, but different ISO2 should fail")
+	assert.NotEqual(0, handler.CheckCountry("PL", "POLSKA"), "Correct ISO2, but slightly different name should fail (case-sensitive)")
+	assert.NotEqual(0, handler.CheckCountry("POL", "POLAND"), "Incorrect ISO2 format should fail")
+	assert.NotEqual(0, handler.CheckCountry("", "POLAND"), "Empty ISO2 should fail")
+	assert.NotEqual(0, handler.CheckCountry("PL", ""), "Empty country name should fail")
+}

@@ -234,6 +234,13 @@ func (r *Repository) GetBankByCountry(context *fiber.Ctx) error {
 	return nil
 }
 
+func (r *Repository) SiteStatus(context *fiber.Ctx) error {
+	context.Status(http.StatusOK).JSON(&fiber.Map{
+		"message": "server is active and listening",
+	})
+	return nil
+}
+
 func (r *Repository) SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
 
@@ -243,4 +250,5 @@ func (r *Repository) SetupRoutes(app *fiber.App) {
 	api.Get("/v1/swift-codes/country/:country", r.GetBankByCountry)
 	api.Get("/v1/swift-codes/:id", r.GetBankByID)
 	api.Get("/v1/swift-codes", r.GetAllBanks)
+	api.Get("", r.SiteStatus)
 }
