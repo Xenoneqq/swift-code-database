@@ -4,11 +4,11 @@ import "gorm.io/gorm"
 
 type Bank struct {
 	Address       string `json:"address"`
-	BankName      string `json:"bankName"`
-	CountryISO2   string `json:"countryISO2"`
-	CountryName   string `json:"countryName"`
+	BankName      string `json:"bankName" gorm:"not null"`
+	CountryISO2   string `json:"countryISO2" gorm:"not null"`
+	CountryName   string `json:"countryName" gorm:"not null"`
 	IsHeadquarter bool   `json:"isHeadquarter"`
-	SwiftCode     string `gorm:"primaryKey" json:"swiftCode"`
+	SwiftCode     string `gorm:"primaryKey;not null" json:"swiftCode"`
 }
 
 type Branch struct {

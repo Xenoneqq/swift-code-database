@@ -1,0 +1,6 @@
+COUNTRY ISO2 CODE,SWIFT CODE,CODE TYPE,NAME,ADDRESS,TOWN NAME,COUNTRY NAME,TIME ZONE
+PL,IIBKPLKRXXX,BIC11,InvestIt Bank,Long Street 2,Cracow,POLAND,Europe/Warsaw
+PL,IIBKPLKRAAB,BIC11,InvestIt Bank Two,Long Street 65,Cracow,POLAND,Europe/Warsaw
+PL,LCKBPLKRXXX,BIC11,Local Bank,Long Street 25,Cracow,POLAND,Europe/Warsaw
+PL,TOBKPLKRXXX,BIC11,The Other Bank,Long Street 125,Cracow,POLAND,Europe/Warsaw
+PL,LCKBPLKRABC,BIC11,The Other Other Bank,Long Street 99,Cracow,POLAND,Europe/Warsaw

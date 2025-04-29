@@ -32,7 +32,6 @@ services:
       - "8080:8080"
     depends_on:
       - db
-      - db_test
     environment:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
@@ -41,10 +40,30 @@ services:
       DB_NAME: ${DB_NAME}
       DB_SSLMODE: disable
       MODE: ${MODE}
+    command: ["sh", "./setup_main.sh", "-t", "60", "${DB_HOST}:${DB_PORT}"]
     volumes:
       - app_data:/app/data
+
+  app_tests:
+    build: ./app
+    container_name: swift_app_tests
+    depends_on:
+      - db_test
+      - app
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: root
+      DB_PASSWORD: admin
+      DB_NAME: ${DB_NAME}
+      DB_SSLMODE: disable
+      MODE: ${MODE}
+    command: ["sh", "./setup_test.sh", "-t", "60", "${DB_HOST}:${DB_PORT}"]
+    volumes:
+      - app_tests_data:/app/data
 
 volumes:
   pgdata:
   pgdata_test:
   app_data:
+  app_tests_data:
