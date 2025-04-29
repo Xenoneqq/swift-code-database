@@ -26,8 +26,14 @@ func TestInsertingBank_Positive_Headquarter(t *testing.T) {
 	defer testutils.DeleteBankSafe(headquarterBank, baseURL)
 
 	res := testutils.PostBank(assert, headquarterBank, baseURL)
-	if res != nil {
-		assert.Equal(http.StatusCreated, res.StatusCode, "Expected status code 201 for headquarter creation")
+	if res == nil {
+		t.FailNow()
+		return
+	}
+	assert.Equal(http.StatusCreated, res.StatusCode, "Expected status code 201 for headquarter creation")
+	if http.StatusCreated != res.StatusCode {
+		testutils.PrintMessageError(t, res)
+		return
 	}
 
 	defer testutils.DeleteBankSafe(headquarterBank, baseURL)
@@ -50,8 +56,14 @@ func TestInsertingBank_Positive_Branch(t *testing.T) {
 	defer testutils.DeleteBankSafe(branchBank, baseURL)
 
 	res := testutils.PostBank(assert, branchBank, baseURL)
-	if res != nil {
-		assert.Equal(http.StatusCreated, res.StatusCode, "Expected status code 201 for branch creation")
+	if res == nil {
+		t.FailNow()
+		return
+	}
+	assert.Equal(http.StatusCreated, res.StatusCode, "Expected status code 201 for headquarter creation")
+	if http.StatusCreated != res.StatusCode {
+		testutils.PrintMessageError(t, res)
+		return
 	}
 
 	defer testutils.DeleteBankSafe(branchBank, baseURL)
@@ -71,8 +83,14 @@ func TestInsertingBank_Negative_SwiftCodeSmall(t *testing.T) {
 	}
 
 	res := testutils.PostBank(assert, bank, baseURL)
-	if res != nil {
-		assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for swift code with lower letters")
+	if res == nil {
+		t.FailNow()
+		return
+	}
+	assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for swift code with lower letters")
+	if http.StatusBadRequest != res.StatusCode {
+		testutils.PrintMessageError(t, res)
+		return
 	}
 }
 
@@ -90,8 +108,14 @@ func TestInsertingBank_Negative_SwiftCodeLength(t *testing.T) {
 	}
 
 	res := testutils.PostBank(assert, bank, baseURL)
-	if res != nil {
-		assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for swift code with incorrect length")
+	if res == nil {
+		t.FailNow()
+		return
+	}
+	assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for swift code with incorrect length")
+	if http.StatusBadRequest != res.StatusCode {
+		testutils.PrintMessageError(t, res)
+		return
 	}
 }
 
@@ -109,8 +133,14 @@ func TestInsertingBank_Negative_SwiftCodeContainsNumber(t *testing.T) {
 	}
 
 	res := testutils.PostBank(assert, bank, baseURL)
-	if res != nil {
-		assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for SWIFT code with numbers in first 6 characters")
+	if res == nil {
+		t.FailNow()
+		return
+	}
+	assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for SWIFT code with numbers in first 6 characters")
+	if http.StatusBadRequest != res.StatusCode {
+		testutils.PrintMessageError(t, res)
+		return
 	}
 }
 
@@ -128,9 +158,16 @@ func TestInsertingBank_Negative_CountryLowerLetters(t *testing.T) {
 	}
 
 	res := testutils.PostBank(assert, bank, baseURL)
-	if res != nil {
-		assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for country with lower letters")
+	if res == nil {
+		t.FailNow()
+		return
 	}
+	assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for country with lower letters")
+	if http.StatusBadRequest != res.StatusCode {
+		testutils.PrintMessageError(t, res)
+		return
+	}
+
 }
 
 func TestInsertingBank_Negative_NotRealISO2(t *testing.T) {
@@ -147,8 +184,14 @@ func TestInsertingBank_Negative_NotRealISO2(t *testing.T) {
 	}
 
 	res := testutils.PostBank(assert, bank, baseURL)
-	if res != nil {
-		assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for fake ISO2")
+	if res == nil {
+		t.FailNow()
+		return
+	}
+	assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for fake ISO2")
+	if http.StatusBadRequest != res.StatusCode {
+		testutils.PrintMessageError(t, res)
+		return
 	}
 }
 
@@ -166,8 +209,14 @@ func TestInsertingBank_Negative_NotRealCountry_REALISO2(t *testing.T) {
 	}
 
 	res := testutils.PostBank(assert, bank, baseURL)
-	if res != nil {
-		assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for fake country (with real ISO2)")
+	if res == nil {
+		t.FailNow()
+		return
+	}
+	assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for fake country (with real ISO2)")
+	if http.StatusBadRequest != res.StatusCode {
+		testutils.PrintMessageError(t, res)
+		return
 	}
 }
 
@@ -185,8 +234,14 @@ func TestInsertingBank_Negative_NotRealCountry_FAKEISO2(t *testing.T) {
 	}
 
 	res := testutils.PostBank(assert, bank, baseURL)
-	if res != nil {
-		assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for fake country (with fake ISO2)")
+	if res == nil {
+		t.FailNow()
+		return
+	}
+	assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for fake country (with fake ISO2)")
+	if http.StatusBadRequest != res.StatusCode {
+		testutils.PrintMessageError(t, res)
+		return
 	}
 }
 
@@ -204,8 +259,14 @@ func TestInsertingBank_Negative_IncorrectCountryForISO2(t *testing.T) {
 	}
 
 	res := testutils.PostBank(assert, bank, baseURL)
-	if res != nil {
-		assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for incorrect country for ISO2")
+	if res == nil {
+		t.FailNow()
+		return
+	}
+	assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for incorrect country for ISO2")
+	if http.StatusBadRequest != res.StatusCode {
+		testutils.PrintMessageError(t, res)
+		return
 	}
 }
 
@@ -223,9 +284,16 @@ func TestInsertingBank_Negative_ISO2NotMatchingSwiftCode(t *testing.T) {
 	}
 
 	res := testutils.PostBank(assert, bank, baseURL)
-	if res != nil {
-		assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for ISO2 not matching the one in SWIFT code")
+	if res == nil {
+		t.FailNow()
+		return
 	}
+	assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for ISO2 not matching the one in SWIFT code")
+	if http.StatusBadRequest != res.StatusCode {
+		testutils.PrintMessageError(t, res)
+		return
+	}
+
 }
 
 func TestInsertingBank_Negative_HeadquarterSwiftError(t *testing.T) {
@@ -242,8 +310,14 @@ func TestInsertingBank_Negative_HeadquarterSwiftError(t *testing.T) {
 	}
 
 	res := testutils.PostBank(assert, bank, baseURL)
-	if res != nil {
-		assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for headquarter without XXX in SWIFT code")
+	if res == nil {
+		t.FailNow()
+		return
+	}
+	assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for headquarter without XXX in SWIFT code")
+	if http.StatusBadRequest != res.StatusCode {
+		testutils.PrintMessageError(t, res)
+		return
 	}
 }
 
@@ -261,7 +335,13 @@ func TestInsertingBank_Negative_BranchSwiftError(t *testing.T) {
 	}
 
 	res := testutils.PostBank(assert, bank, baseURL)
-	if res != nil {
-		assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for branch with XXX SWIFT code")
+	if res == nil {
+		t.FailNow()
+		return
+	}
+	assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for branch with XXX SWIFT code")
+	if http.StatusBadRequest != res.StatusCode {
+		testutils.PrintMessageError(t, res)
+		return
 	}
 }

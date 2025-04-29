@@ -34,7 +34,7 @@ func TestGettingBankWithID_branch(t *testing.T) {
 
 	assert.Equal(http.StatusCreated, resPost.StatusCode, "Expected status code 201 for creating test bank")
 	if resPost.StatusCode != http.StatusCreated {
-		t.FailNow()
+		testutils.PrintMessageError(t, resPost)
 		return
 	}
 
@@ -51,6 +51,7 @@ func TestGettingBankWithID_branch(t *testing.T) {
 
 	assert.Equal(http.StatusOK, resGet.StatusCode, "Expected status code 200 for getting bank by SWIFT code %s", bank.SwiftCode)
 	if resGet.StatusCode != http.StatusOK {
+		testutils.PrintMessageError(t, resGet)
 		return
 	}
 	defer resGet.Body.Close()
@@ -107,6 +108,7 @@ func TestGettingBankWithID_headquarter(t *testing.T) {
 
 	assert.Equal(http.StatusCreated, resPost.StatusCode, "Expected status code 201 for creating test bank (headquarter)")
 	if resPost.StatusCode != http.StatusCreated {
+		testutils.PrintMessageError(t, resPost)
 		return
 	}
 
@@ -118,6 +120,7 @@ func TestGettingBankWithID_headquarter(t *testing.T) {
 
 	assert.Equal(http.StatusCreated, resPost.StatusCode, "Expected status code 201 for creating test bank (branch one)")
 	if resPost.StatusCode != http.StatusCreated {
+		testutils.PrintMessageError(t, resPost)
 		return
 	}
 
@@ -129,6 +132,7 @@ func TestGettingBankWithID_headquarter(t *testing.T) {
 
 	assert.Equal(http.StatusCreated, resPost.StatusCode, "Expected status code 201 for creating test bank (branch two)")
 	if resPost.StatusCode != http.StatusCreated {
+		testutils.PrintMessageError(t, resPost)
 		return
 	}
 
@@ -145,6 +149,7 @@ func TestGettingBankWithID_headquarter(t *testing.T) {
 
 	assert.Equal(http.StatusOK, resGet.StatusCode, "Expected status code 200 for getting bank by SWIFT code %s", bankHead.SwiftCode)
 	if resGet.StatusCode != http.StatusOK {
+		testutils.PrintMessageError(t, resGet)
 		return
 	}
 	defer resGet.Body.Close()

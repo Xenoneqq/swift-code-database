@@ -24,7 +24,6 @@ func PostBank(assert *assert.Assertions, bank models.Bank, baseURL string) *http
 	if err != nil {
 		return nil
 	}
-	defer res.Body.Close()
 	return res
 }
 
@@ -42,7 +41,6 @@ func DeleteBank(assert *assert.Assertions, bank models.Bank, baseURL string) *ht
 	if err != nil {
 		return nil
 	}
-	defer res.Body.Close()
 	return res
 }
 
@@ -66,7 +64,6 @@ func ReadBankFromResponse(assert *assert.Assertions, res *http.Response) (models
 	if res == nil {
 		return models.Bank{}, errors.New("HTTP response failed and is nil (failed to convert to Bank data)")
 	}
-	defer res.Body.Close()
 
 	bodyBytes, err := io.ReadAll(res.Body)
 	assert.Nil(err, "Failed to read response body: %v", err)
@@ -94,7 +91,6 @@ func ReadHeadquarterFromResponse(assert *assert.Assertions, res *http.Response) 
 	if res == nil {
 		return models.Headquarter{}, errors.New("HTTP response failed and is nil (failed to convert to Bank data)")
 	}
-	defer res.Body.Close()
 
 	bodyBytes, err := io.ReadAll(res.Body)
 	assert.Nil(err, "Failed to read response body: %v", err)
