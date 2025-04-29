@@ -44,8 +44,35 @@ func DeleteBank(assert *assert.Assertions, bank models.Bank, baseURL string) *ht
 	return res
 }
 
+func DeleteBankBySwiftCode(assert *assert.Assertions, swiftcode string, baseURL string) *http.Response {
+	deleteURL := fmt.Sprintf("%s/%s", baseURL, swiftcode)
+	req, err := http.NewRequest(http.MethodDelete, deleteURL, nil)
+	assert.Nil(err, "Failed to create DELETE request for %s: %v", swiftcode, err)
+	if err != nil {
+		return nil
+	}
+
+	client := &http.Client{}
+	res, err := client.Do(req)
+	assert.Nil(err, "HTTP DELETE request for %s failed: %v", swiftcode, err)
+	if err != nil {
+		return nil
+	}
+	return res
+}
+
 func DeleteBankSafe(bank models.Bank, baseURL string) {
 	deleteURL := fmt.Sprintf("%s/%s", baseURL, bank.SwiftCode)
+	req, _ := http.NewRequest(http.MethodDelete, deleteURL, nil)
+	client := &http.Client{}
+	deleteRes, _ := client.Do(req)
+	if deleteRes != nil {
+		deleteRes.Body.Close()
+	}
+}
+
+func DeleteBankBySwiftCodeSafe(swiftcode string, baseURL string) {
+	deleteURL := fmt.Sprintf("%s/%s", baseURL, swiftcode)
 	req, _ := http.NewRequest(http.MethodDelete, deleteURL, nil)
 	client := &http.Client{}
 	deleteRes, _ := client.Do(req)

@@ -25,7 +25,7 @@ func TestInsertingBank_Positive_Headquarter(t *testing.T) {
 	// deleting bank if left from old tests
 	defer testutils.DeleteBankSafe(headquarterBank, baseURL)
 
-	res := testutils.PostBank(assert, headquarterBank, baseURL)
+	var res *http.Response = testutils.PostBank(assert, headquarterBank, baseURL)
 	if res == nil {
 		t.FailNow()
 		return
@@ -55,7 +55,7 @@ func TestInsertingBank_Positive_Branch(t *testing.T) {
 	// deleting bank if left from old tests
 	defer testutils.DeleteBankSafe(branchBank, baseURL)
 
-	res := testutils.PostBank(assert, branchBank, baseURL)
+	var res *http.Response = testutils.PostBank(assert, branchBank, baseURL)
 	if res == nil {
 		t.FailNow()
 		return
@@ -82,7 +82,7 @@ func TestInsertingBank_Negative_SwiftCodeSmall(t *testing.T) {
 		IsHeadquarter: true,
 	}
 
-	res := testutils.PostBank(assert, bank, baseURL)
+	var res *http.Response = testutils.PostBank(assert, bank, baseURL)
 	if res == nil {
 		t.FailNow()
 		return
@@ -107,7 +107,7 @@ func TestInsertingBank_Negative_SwiftCodeLength(t *testing.T) {
 		IsHeadquarter: true,
 	}
 
-	res := testutils.PostBank(assert, bank, baseURL)
+	var res *http.Response = testutils.PostBank(assert, bank, baseURL)
 	if res == nil {
 		t.FailNow()
 		return
@@ -132,7 +132,7 @@ func TestInsertingBank_Negative_SwiftCodeContainsNumber(t *testing.T) {
 		IsHeadquarter: true,
 	}
 
-	res := testutils.PostBank(assert, bank, baseURL)
+	var res *http.Response = testutils.PostBank(assert, bank, baseURL)
 	if res == nil {
 		t.FailNow()
 		return
@@ -157,7 +157,7 @@ func TestInsertingBank_Negative_CountryLowerLetters(t *testing.T) {
 		IsHeadquarter: true,
 	}
 
-	res := testutils.PostBank(assert, bank, baseURL)
+	var res *http.Response = testutils.PostBank(assert, bank, baseURL)
 	if res == nil {
 		t.FailNow()
 		return
@@ -183,7 +183,7 @@ func TestInsertingBank_Negative_NotRealISO2(t *testing.T) {
 		IsHeadquarter: true,
 	}
 
-	res := testutils.PostBank(assert, bank, baseURL)
+	var res *http.Response = testutils.PostBank(assert, bank, baseURL)
 	if res == nil {
 		t.FailNow()
 		return
@@ -208,7 +208,7 @@ func TestInsertingBank_Negative_NotRealCountry_REALISO2(t *testing.T) {
 		IsHeadquarter: true,
 	}
 
-	res := testutils.PostBank(assert, bank, baseURL)
+	var res *http.Response = testutils.PostBank(assert, bank, baseURL)
 	if res == nil {
 		t.FailNow()
 		return
@@ -233,7 +233,7 @@ func TestInsertingBank_Negative_NotRealCountry_FAKEISO2(t *testing.T) {
 		IsHeadquarter: true,
 	}
 
-	res := testutils.PostBank(assert, bank, baseURL)
+	var res *http.Response = testutils.PostBank(assert, bank, baseURL)
 	if res == nil {
 		t.FailNow()
 		return
@@ -258,7 +258,7 @@ func TestInsertingBank_Negative_IncorrectCountryForISO2(t *testing.T) {
 		IsHeadquarter: true,
 	}
 
-	res := testutils.PostBank(assert, bank, baseURL)
+	var res *http.Response = testutils.PostBank(assert, bank, baseURL)
 	if res == nil {
 		t.FailNow()
 		return
@@ -283,7 +283,7 @@ func TestInsertingBank_Negative_ISO2NotMatchingSwiftCode(t *testing.T) {
 		IsHeadquarter: true,
 	}
 
-	res := testutils.PostBank(assert, bank, baseURL)
+	var res *http.Response = testutils.PostBank(assert, bank, baseURL)
 	if res == nil {
 		t.FailNow()
 		return
@@ -309,7 +309,7 @@ func TestInsertingBank_Negative_HeadquarterSwiftError(t *testing.T) {
 		IsHeadquarter: true,
 	}
 
-	res := testutils.PostBank(assert, bank, baseURL)
+	var res *http.Response = testutils.PostBank(assert, bank, baseURL)
 	if res == nil {
 		t.FailNow()
 		return
@@ -334,7 +334,7 @@ func TestInsertingBank_Negative_BranchSwiftError(t *testing.T) {
 		IsHeadquarter: false,
 	}
 
-	res := testutils.PostBank(assert, bank, baseURL)
+	var res *http.Response = testutils.PostBank(assert, bank, baseURL)
 	if res == nil {
 		t.FailNow()
 		return

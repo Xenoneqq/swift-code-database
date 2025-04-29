@@ -75,7 +75,7 @@ func (r *Repository) GetAllBanks(context *fiber.Ctx) error {
 	}
 
 	if res.RowsAffected == 0 {
-		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
+		context.Status(http.StatusOK).JSON(&fiber.Map{
 			"message": "There are no banks in the database",
 			"data":    []models.Bank{},
 		})
@@ -109,7 +109,7 @@ func (r *Repository) GetBankByID(context *fiber.Ctx) error {
 	}
 
 	if res.RowsAffected == 0 {
-		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
+		context.Status(http.StatusNotFound).JSON(&fiber.Map{
 			"message": "bank with this SWIFT code does not exist...",
 			"data":    []models.Bank{},
 		})
@@ -195,7 +195,7 @@ func (r *Repository) DeleteBank(context *fiber.Ctx) error {
 	}
 
 	if res.RowsAffected == 0 {
-		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
+		context.Status(http.StatusNotFound).JSON(&fiber.Map{
 			"message": "bank with selected SWIFT id does not exist",
 		})
 		return nil
@@ -232,7 +232,7 @@ func (r *Repository) GetBankByCountry(context *fiber.Ctx) error {
 	}
 
 	if res.RowsAffected == 0 {
-		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
+		context.Status(http.StatusNotFound).JSON(&fiber.Map{
 			"message": "No banks with selected country code",
 		})
 		return nil

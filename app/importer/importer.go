@@ -48,7 +48,7 @@ func LoadCSV(path string, db *gorm.DB) error {
 		res := db.Create(&bank)
 		if res.Error != nil {
 			fmt.Printf("(csv) failed to insert bank, database error : %s\nerror: %s",
-				bank.SwiftCode, err.Error())
+				bank.SwiftCode, res.Error)
 		}
 	}
 

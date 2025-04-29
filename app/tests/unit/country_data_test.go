@@ -14,6 +14,19 @@ func TestCountryCheck_Positive(t *testing.T) {
 	assert.Equal(0, handler.CheckCountry("BE", "BELGIUM"), "Correct ISO2 and country name for Belgium should pass")
 	assert.Equal(0, handler.CheckCountry("DE", "GERMANY"), "Correct ISO2 and country name for Germany should pass")
 	assert.Equal(0, handler.CheckCountry("FR", "FRANCE"), "Correct ISO2 and country name for France should pass")
+	assert.Equal(0, handler.CheckCountry("ES", "SPAIN"), "Correct ISO2 and country name for Spain should pass")
+	assert.Equal(0, handler.CheckCountry("IT", "ITALY"), "Correct ISO2 and country name for Italy should pass")
+	assert.Equal(0, handler.CheckCountry("NL", "NETHERLANDS"), "Correct ISO2 and country name for Netherlands should pass")
+	assert.Equal(0, handler.CheckCountry("SE", "SWEDEN"), "Correct ISO2 and country name for Sweden should pass")
+	assert.Equal(0, handler.CheckCountry("CH", "SWITZERLAND"), "Correct ISO2 and country name for Switzerland should pass")
+	assert.Equal(0, handler.CheckCountry("AT", "AUSTRIA"), "Correct ISO2 and country name for Austria should pass")
+	assert.Equal(0, handler.CheckCountry("DK", "DENMARK"), "Correct ISO2 and country name for Denmark should pass")
+	assert.Equal(0, handler.CheckCountry("NO", "NORWAY"), "Correct ISO2 and country name for Norway should pass")
+	assert.Equal(0, handler.CheckCountry("FI", "FINLAND"), "Correct ISO2 and country name for Finland should pass")
+	assert.Equal(0, handler.CheckCountry("IE", "IRELAND"), "Correct ISO2 and country name for Ireland should pass")
+	assert.Equal(0, handler.CheckCountry("PT", "PORTUGAL"), "Correct ISO2 and country name for Portugal should pass")
+	assert.Equal(0, handler.CheckCountry("GR", "GREECE"), "Correct ISO2 and country name for Greece should pass")
+	assert.Equal(0, handler.CheckCountry("HU", "HUNGARY"), "Correct ISO2 and country name for Hungary should pass")
 }
 
 func TestCountryCheck_Negative(t *testing.T) {
