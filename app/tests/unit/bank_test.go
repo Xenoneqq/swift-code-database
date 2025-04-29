@@ -62,11 +62,11 @@ func TestBankCheckFunction_Positive(t *testing.T) {
 	assert.Nil(handler.CheckBankData(bankFR), "Valid bank data for France (non-headquarter) should return nil")
 }
 
-func TestBankCheckFunction_Negative(t *testing.T) {
+func TestCheckBankData_InvalidLength(t *testing.T) {
 	assert := assert.New(t)
 
 	bank := models.Bank{
-		SwiftCode:     "ALIOPLKRXXXXXX",
+		SwiftCode:     "ALIOPLKRXXXXXX", // 14 chars
 		BankName:      "All In One Bank",
 		CountryISO2:   "PL",
 		CountryName:   "POLAND",
@@ -74,9 +74,13 @@ func TestBankCheckFunction_Negative(t *testing.T) {
 		IsHeadquarter: true,
 	}
 	assert.EqualError(handler.CheckBankData(bank), "SWIFT code must be 11 characters long")
+}
 
-	bank = models.Bank{
-		SwiftCode:     "123OPLKRXXX",
+func TestCheckBankData_NumbersInPrefix(t *testing.T) {
+	assert := assert.New(t)
+
+	bank := models.Bank{
+		SwiftCode:     "123OPLKRXXX", // contains numbers
 		BankName:      "All In One Bank",
 		CountryISO2:   "PL",
 		CountryName:   "POLAND",
@@ -84,9 +88,13 @@ func TestBankCheckFunction_Negative(t *testing.T) {
 		IsHeadquarter: true,
 	}
 	assert.EqualError(handler.CheckBankData(bank), "first 6 characters of the SWIFT code cannot contain numbers")
+}
 
-	bank = models.Bank{
-		SwiftCode:     "aliOPLKRxxx",
+func TestCheckBankData_LowercaseLetters(t *testing.T) {
+	assert := assert.New(t)
+
+	bank := models.Bank{
+		SwiftCode:     "aliOPLKRxxx", // contains lowercase
 		BankName:      "All In One Bank",
 		CountryISO2:   "PL",
 		CountryName:   "POLAND",
@@ -94,29 +102,41 @@ func TestBankCheckFunction_Negative(t *testing.T) {
 		IsHeadquarter: true,
 	}
 	assert.EqualError(handler.CheckBankData(bank), "SWIFT code must consist only of UPPER LETTERS")
+}
 
-	bank = models.Bank{
+func TestCheckBankData_CountryNameCase(t *testing.T) {
+	assert := assert.New(t)
+
+	bank := models.Bank{
 		SwiftCode:     "ALIOPLKRXXX",
 		BankName:      "All In One Bank",
 		CountryISO2:   "PL",
-		CountryName:   "poland",
+		CountryName:   "poland", // lowercase
 		Address:       "Amazing Street 8",
 		IsHeadquarter: true,
 	}
 	assert.EqualError(handler.CheckBankData(bank), "country name must be all UPPER CASE")
+}
 
-	bank = models.Bank{
-		SwiftCode:     "ALIOPLKRXXX",
+func TestCheckBankData_MismatchedISO2(t *testing.T) {
+	assert := assert.New(t)
+
+	bank := models.Bank{
+		SwiftCode:     "ALIOPLKRXXX", // PL
 		BankName:      "All In One Bank",
-		CountryISO2:   "DE",
+		CountryISO2:   "DE", // DE
 		CountryName:   "POLAND",
 		Address:       "Amazing Street 8",
 		IsHeadquarter: true,
 	}
 	assert.EqualError(handler.CheckBankData(bank), "country ISO2 does not match the one inside the SWIFT code : DE != PL")
+}
 
-	bank = models.Bank{
-		SwiftCode:     "ALIOPLKRXXX",
+func TestCheckBankData_XXXMustBeHQ(t *testing.T) {
+	assert := assert.New(t)
+
+	bank := models.Bank{
+		SwiftCode:     "ALIOPLKRXXX", // XXX at the end
 		BankName:      "All In One Bank",
 		CountryISO2:   "PL",
 		CountryName:   "POLAND",
@@ -124,9 +144,13 @@ func TestBankCheckFunction_Negative(t *testing.T) {
 		IsHeadquarter: false,
 	}
 	assert.EqualError(handler.CheckBankData(bank), "bank with XXX as the last 3 letters of the SWIFT code has to be a headquarter")
+}
 
-	bank = models.Bank{
-		SwiftCode:     "ALIOPLKRAAB",
+func TestCheckBankData_NonXXXCannotBeHQ(t *testing.T) {
+	assert := assert.New(t)
+
+	bank := models.Bank{
+		SwiftCode:     "ALIOPLKRAAB", // Not XXX
 		BankName:      "All In One Bank",
 		CountryISO2:   "PL",
 		CountryName:   "POLAND",
@@ -134,6 +158,65 @@ func TestBankCheckFunction_Negative(t *testing.T) {
 		IsHeadquarter: true,
 	}
 	assert.EqualError(handler.CheckBankData(bank), "bank without XXX as the last 3 letters of the SWIFT code cannot to be a headquarter")
+}
+
+func TestBank_EmptyFieldsValidation(t *testing.T) {
+	assert := assert.New(t)
+
+	// Empty BankName
+	bank := models.Bank{
+		Address:       "Bank Street 8",
+		BankName:      " ",
+		CountryISO2:   "PL",
+		CountryName:   "POLAND",
+		SwiftCode:     "ALIOPLKRXXX",
+		IsHeadquarter: true,
+	}
+	assert.EqualError(handler.CheckBankData(bank), "bank name cannot be left empty")
+
+	// Empty CountryISO2
+	bank = models.Bank{
+		Address:       "Bank Street 8",
+		BankName:      "All In One Bank",
+		CountryISO2:   " ",
+		CountryName:   "POLAND",
+		SwiftCode:     "ALIOPLKRXXX",
+		IsHeadquarter: true,
+	}
+	assert.EqualError(handler.CheckBankData(bank), "bank iso2 code cannot be left empty")
+
+	// Empty CountryName
+	bank = models.Bank{
+		Address:       "Bank Street 8",
+		BankName:      "All In One Bank",
+		CountryISO2:   "PL",
+		CountryName:   " ",
+		SwiftCode:     "ALIOPLKRXXX",
+		IsHeadquarter: true,
+	}
+	assert.EqualError(handler.CheckBankData(bank), "bank country cannot be left empty")
+
+	// Empty SwiftCode
+	bank = models.Bank{
+		Address:       "Bank Street 8",
+		BankName:      "All In One Bank",
+		CountryISO2:   "PL",
+		CountryName:   "POLAND",
+		SwiftCode:     " ",
+		IsHeadquarter: true,
+	}
+	assert.EqualError(handler.CheckBankData(bank), "bank SWIFT code cannot be left empty")
+
+	// Empty Address (correct, should PASS)
+	bank = models.Bank{
+		Address:       "",
+		BankName:      "All In One Bank",
+		CountryISO2:   "PL",
+		CountryName:   "POLAND",
+		SwiftCode:     "ALIOPLKRXXX",
+		IsHeadquarter: true,
+	}
+	assert.Nil(handler.CheckBankData(bank), "expected bank to be correct for having empty address (can be empty)")
 }
 
 func TestBankToBranchConversion(t *testing.T) {

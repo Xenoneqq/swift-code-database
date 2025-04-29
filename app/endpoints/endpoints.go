@@ -1,7 +1,6 @@
 package endpoints
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/Xenoneqq/swift-code-database/handler"
@@ -21,14 +20,15 @@ func (r *Repository) CreateBank(context *fiber.Ctx) error {
 	if err != nil {
 		context.Status(http.StatusUnprocessableEntity).JSON(&fiber.Map{
 			"message": "failed to parse bank data to database entry (incorrect bank details)"})
-		return err
+		return nil
 	}
 
 	err = handler.CheckBankData(bank)
 	if err != nil {
+		message := "failed to create bank entry: " + err.Error()
 		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
-			"message": "failed to create bank entry"})
-		return err
+			"message": message})
+		return nil
 	}
 
 	existingBank := models.Bank{}
@@ -36,23 +36,23 @@ func (r *Repository) CreateBank(context *fiber.Ctx) error {
 	if res.Error != nil {
 		context.Status(http.StatusInternalServerError).JSON(&fiber.Map{
 			"message": "failed to check for existing bank in database (connection error)"})
-		return res.Error
+		return nil
 	}
 
 	if res.RowsAffected != 0 {
 		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
-			"message": "bank with this swiftcode already exists"})
-		return errors.New("bank with this SWIFT code already exists")
+			"message": "bank with this SWIFT code already exists"})
+		return nil
 	}
 
 	res = r.DB.Create(&bank)
 	if res.Error != nil {
 		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
 			"message": "failed to create bank entry"})
-		return res.Error
+		return nil
 	}
 
-	context.Status(http.StatusOK).JSON(&fiber.Map{
+	context.Status(http.StatusCreated).JSON(&fiber.Map{
 		"message": "created bank entry"})
 	return nil
 }
@@ -60,12 +60,18 @@ func (r *Repository) CreateBank(context *fiber.Ctx) error {
 func (r *Repository) GetAllBanks(context *fiber.Ctx) error {
 	banks := &[]models.Bank{}
 
-	res := r.DB.Find(banks)
+	res := r.DB.
+		Order("bank_name ASC").
+		Order("is_headquarter DESC").
+		Order("country_name ASC").
+		Order("swift_code ASC").
+		Find(banks)
+
 	if res.Error != nil {
 		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
 			"message": "Failed to fetch banks",
 		})
-		return res.Error
+		return nil
 	}
 
 	if res.RowsAffected == 0 {
@@ -99,7 +105,7 @@ func (r *Repository) GetBankByID(context *fiber.Ctx) error {
 		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
 			"message": "failed to fetch for bank with SWIFT code",
 		})
-		return res.Error
+		return nil
 	}
 
 	if res.RowsAffected == 0 {
@@ -123,12 +129,18 @@ func (r *Repository) GetBankByID(context *fiber.Ctx) error {
 
 		branchesFull := &[]models.Bank{}
 		first8 := id[:8]
-		res = r.DB.Where("LEFT(swift_code, 8) = ?", first8).Where("is_headquarter != ?", bank.IsHeadquarter).Find(branchesFull)
+		res = r.DB.Where("LEFT(swift_code, 8) = ?", first8).Where("is_headquarter != ?", bank.IsHeadquarter).
+			Order("bank_name ASC").
+			Order("is_headquarter DESC").
+			Order("country_name ASC").
+			Order("swift_code ASC").
+			Find(branchesFull)
+
 		if res.Error != nil {
 			context.Status(http.StatusBadRequest).JSON(&fiber.Map{
 				"message": "failed to fetch for branches of bank with SWIFT code",
 			})
-			return res.Error
+			return nil
 		}
 
 		branches := models.ConvertBanksToBranches(*branchesFull)
@@ -179,7 +191,7 @@ func (r *Repository) DeleteBank(context *fiber.Ctx) error {
 		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
 			"message": "failed to delete bank",
 		})
-		return res.Error
+		return nil
 	}
 
 	if res.RowsAffected == 0 {
@@ -205,12 +217,18 @@ func (r *Repository) GetBankByCountry(context *fiber.Ctx) error {
 		return nil
 	}
 
-	res := r.DB.Where("country_iso2 = ?", country).Find(banks)
+	res := r.DB.Where("country_iso2 = ?", country).
+		Order("bank_name ASC").
+		Order("is_headquarter DESC").
+		Order("country_name ASC").
+		Order("swift_code ASC").
+		Find(banks)
+
 	if res.Error != nil {
 		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
 			"message": "failed to fetch all SWIFT codes with countryISO2",
 		})
-		return res.Error
+		return nil
 	}
 
 	if res.RowsAffected == 0 {

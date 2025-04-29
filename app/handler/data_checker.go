@@ -9,6 +9,22 @@ import (
 
 func CheckBankData(bank models.Bank) error {
 
+	if strings.TrimSpace(bank.BankName) == "" {
+		return errors.New("bank name cannot be left empty")
+	}
+
+	if strings.TrimSpace(bank.CountryISO2) == "" {
+		return errors.New("bank iso2 code cannot be left empty")
+	}
+
+	if strings.TrimSpace(bank.CountryName) == "" {
+		return errors.New("bank country cannot be left empty")
+	}
+
+	if strings.TrimSpace(bank.SwiftCode) == "" {
+		return errors.New("bank SWIFT code cannot be left empty")
+	}
+
 	if len(bank.SwiftCode) != 11 {
 		return errors.New("SWIFT code must be 11 characters long")
 	}
