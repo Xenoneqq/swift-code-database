@@ -7,7 +7,32 @@ import (
 	"github.com/Xenoneqq/swift-code-database/models"
 )
 
+func CheckSwiftCode(swiftCode string) error {
+	if strings.TrimSpace(swiftCode) == "" {
+		return errors.New("bank SWIFT code cannot be left empty")
+	}
+
+	if len(swiftCode) != 11 {
+		return errors.New("SWIFT code must be 11 characters long")
+	}
+
+	if swiftCode != strings.ToUpper(swiftCode) {
+		return errors.New("SWIFT code must consist only of UPPER LETTERS")
+	}
+
+	if strings.ContainsAny(swiftCode[:6], "0123456789") {
+		return errors.New("first 6 characters of the SWIFT code cannot contain numbers")
+	}
+
+	return nil
+}
+
 func CheckBankData(bank models.Bank) error {
+
+	var err error = CheckSwiftCode(bank.SwiftCode)
+	if err != nil {
+		return err
+	}
 
 	if strings.TrimSpace(bank.BankName) == "" {
 		return errors.New("bank name cannot be left empty")
@@ -19,22 +44,6 @@ func CheckBankData(bank models.Bank) error {
 
 	if strings.TrimSpace(bank.CountryName) == "" {
 		return errors.New("bank country cannot be left empty")
-	}
-
-	if strings.TrimSpace(bank.SwiftCode) == "" {
-		return errors.New("bank SWIFT code cannot be left empty")
-	}
-
-	if len(bank.SwiftCode) != 11 {
-		return errors.New("SWIFT code must be 11 characters long")
-	}
-
-	if bank.SwiftCode != strings.ToUpper(bank.SwiftCode) {
-		return errors.New("SWIFT code must consist only of UPPER LETTERS")
-	}
-
-	if strings.ContainsAny(bank.SwiftCode[:6], "0123456789") {
-		return errors.New("first 6 characters of the SWIFT code cannot contain numbers")
 	}
 
 	if bank.CountryName != strings.ToUpper(bank.CountryName) {
@@ -53,8 +62,8 @@ func CheckBankData(bank models.Bank) error {
 		return errors.New("bank without XXX as the last 3 letters of the SWIFT code cannot to be a headquarter")
 	}
 
-	err := CheckCountry(bank.SwiftCode[4:6], bank.CountryName)
-	switch err {
+	var errCode int = CheckCountry(bank.SwiftCode[4:6], bank.CountryName)
+	switch errCode {
 	case 1:
 		return errors.New("country with selected ISO2 id does not exist")
 	case 2:

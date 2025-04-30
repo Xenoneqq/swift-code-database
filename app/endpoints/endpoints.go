@@ -1,6 +1,7 @@
 package endpoints
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Xenoneqq/swift-code-database/handler"
@@ -96,6 +97,14 @@ func (r *Repository) GetBankByID(context *fiber.Ctx) error {
 	if id == "" {
 		context.Status(http.StatusInternalServerError).JSON(&fiber.Map{
 			"message": "id cannot be empty",
+		})
+		return nil
+	}
+
+	var swiftError error = handler.CheckSwiftCode(id)
+	if swiftError != nil {
+		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
+			"message": fmt.Sprintf("incorrect swiftcode: %v", swiftError),
 		})
 		return nil
 	}
