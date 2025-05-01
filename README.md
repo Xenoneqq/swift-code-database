@@ -89,7 +89,7 @@ Runs the application with a default database populated from the `bank_data.csv` 
 To start the application in this mode:
 
 ```sh
-docker-compose up -d
+docker compose up -d
 ```
 
 ### 2. Debug Mode
@@ -99,7 +99,7 @@ This mode is intended for local debugging and feature testing. It runs the appli
 To start in debug mode:
 
 ```sh
-docker-compose --env-file .env.debug up -d
+docker compose --env-file .env.debug up -d
 ```
 
 ### 3. Testing Mode
@@ -109,7 +109,7 @@ This mode prepares the environment for automated testing. It starts the applicat
 To run in test mode:
 
 ```sh
-docker-compose --env-file .env.test up
+docker compose --env-file .env.test up
 ```
 
 > Using -d launches app in the background. Don't use it if you want to see the test results in terminal
@@ -119,16 +119,20 @@ docker-compose --env-file .env.test up
 To stop the running application and shut down all active containers, use:
 
 ```sh
-docker-compose down
+docker compose down
 ```
 
 If you also want to **remove all associated data volumes** ( full reset ), use the following command:
 
 ```sh
-docker-compose down -v
+docker compose down -v
 ```
 
 > ⚠️ The -v flag will permanently remove all data stored in the database. Use with caution.
+
+> 🛠️ **Note on Docker versions:**  
+> Docker v20+ supports the newer `docker compose` syntax (without a dash).  
+> If you're using an older version, replace `docker compose` with `docker-compose` in all commands.
 
 ## API Reference
 
