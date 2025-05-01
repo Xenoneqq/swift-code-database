@@ -80,7 +80,7 @@ http://localhost:8080/api/v1/swift-codes
 To start the application in this mode:
 
 ```sh
-docker-compose up --build -d
+docker-compose up -d
 ```
 
 ### 2. Debug Mode
@@ -90,7 +90,7 @@ This mode is intended for local debugging and feature testing. It runs the appli
 To start in debug mode:
 
 ```sh
-docker-compose --env-file .env.debug up --build -d
+docker-compose --env-file .env.debug up -d
 ```
 
 ### 3. Testing Mode
@@ -100,8 +100,26 @@ This mode prepares the environment for automated testing. It starts the applicat
 To run in test mode:
 
 ```sh
-docker-compose --env-file .env.test up --build
+docker-compose --env-file .env.test up
 ```
+
+> Using -d launches app in the background. Don't use it if you want to see the test results in terminal
+
+### Stopping the Docker Project
+
+To stop the running application and shut down all active containers, use:
+
+```sh
+docker-compose down
+```
+
+If you also want to **remove all associated data volumes** ( full reset ), use the following command:
+
+```sh
+docker-compose down -v
+```
+
+> ⚠️ The -v flag will permanently remove all data stored in the database. Use with caution.
 
 ## API Reference
 
