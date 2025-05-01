@@ -285,7 +285,7 @@ This project includes an automated test suite that verifies the behavior of the 
 You can run the full test suite using Docker in testing mode:
 
 ```sh
-docker-compose --env-file .env.test up --build
+docker-compose --env-file .env.test up
 ```
 
 This will:

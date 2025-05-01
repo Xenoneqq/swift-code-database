@@ -18,10 +18,10 @@ func TestInsertingBank_Positive_Headquarter(t *testing.T) {
 
 	headquarterBank := models.Bank{
 		SwiftCode:     "ABCDPLGHXXX",
-		BankName:      "Centralny Bank Testowy",
+		BankName:      "Central Bank of Testing",
 		CountryISO2:   "PL",
 		CountryName:   "POLAND",
-		Address:       "Bankowa 1",
+		Address:       "Bank st 1",
 		IsHeadquarter: true,
 	}
 
@@ -48,10 +48,10 @@ func TestInsertingBank_Positive_Branch(t *testing.T) {
 
 	branchBank := models.Bank{
 		SwiftCode:     "IJKLPLPQAAB",
-		BankName:      "Oddział Testowego Banku",
+		BankName:      "Bank of Testing",
 		CountryISO2:   "PL",
 		CountryName:   "POLAND",
-		Address:       "Boczna 2",
+		Address:       "Sidestreet 2",
 		IsHeadquarter: false,
 	}
 
@@ -157,7 +157,7 @@ func TestIncorrectTypeOfBankData(t *testing.T) {
 		BankName:      "Tester Bank",
 		CountryISO2:   "PL",
 		CountryName:   "POLAND",
-		Address:       "Boczna 2",
+		Address:       "Sidestreet 2",
 		IsHeadquarter: false,
 	}
 
@@ -183,6 +183,47 @@ func TestIncorrectTypeOfBankData(t *testing.T) {
 	}
 
 	defer testutils.DeleteBankBySwiftCodeSafe(bank.SwiftCode, baseURL)
+}
+
+func TestInsertingBank_Duplicate(t *testing.T) {
+	assert := assert.New(t)
+	baseURL := "http://app:8080/api/v1/swift-codes"
+
+	headquarterBank := models.Bank{
+		SwiftCode:     "CBOTPLGHXXX",
+		BankName:      "Central Bank of Testing",
+		CountryISO2:   "PL",
+		CountryName:   "POLAND",
+		Address:       "Bank st 1",
+		IsHeadquarter: true,
+	}
+
+	// deleting bank if left from old tests
+	defer testutils.DeleteBankSafe(headquarterBank, baseURL)
+
+	var res *http.Response = testutils.PostBank(assert, headquarterBank, baseURL)
+	if res == nil {
+		t.FailNow()
+		return
+	}
+	assert.Equal(http.StatusCreated, res.StatusCode, "Expected status code 201 for first bank creation")
+	if http.StatusCreated != res.StatusCode {
+		testutils.PrintMessageError(t, res)
+		return
+	}
+
+	res = testutils.PostBank(assert, headquarterBank, baseURL)
+	if res == nil {
+		t.FailNow()
+		return
+	}
+	assert.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400 for attempting to POST the same bank twice")
+	if http.StatusBadRequest != res.StatusCode {
+		testutils.PrintMessageError(t, res)
+		return
+	}
+
+	defer testutils.DeleteBankSafe(headquarterBank, baseURL)
 }
 
 func TestInsertingBank_Negative_SwiftCodeSmall(t *testing.T) {
