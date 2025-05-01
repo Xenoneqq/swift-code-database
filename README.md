@@ -67,15 +67,24 @@ Once Docker is installed, you're ready to proceed with the setup steps.
 
 ## Running with Docker
 
-The application supports multiple Docker run modes, each suited for a different environment or use case. Below are the available modes and their respective commands:
+The project can be launched in different modes depending on the environment and purpose.  
+All commands should be executed from the root directory of the project:
 
-### 1. Default (Production-like)
+```sh
+cd swift-code-database
+```
 
-This mode runs the application with a default database populated from the `bank_data.csv` file located in the project. It exposes an API endpoint for data access at:
+Once launched, the application exposes its API at:
 
 ```
 http://localhost:8080/api/v1/swift-codes
 ```
+
+Below are the available Docker run modes:
+
+### 1. Default (Production-like)
+
+Runs the application with a default database populated from the `bank_data.csv` file included in the project.Recommended for general use and production-like behavior.
 
 To start the application in this mode:
 
